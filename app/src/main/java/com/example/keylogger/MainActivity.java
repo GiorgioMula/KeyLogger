@@ -2,23 +2,18 @@ package com.example.keylogger;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 import static android.view.KeyEvent.*;
-//import static android.view.KeyEvent.KEYCODE_DPAD_CENTER;
-//import static android.view.KeyEvent.KEYCODE_DPAD_DOWN;
-//import static android.view.KeyEvent.KEYCODE_DPAD_LEFT;
-//import static android.view.KeyEvent.KEYCODE_DPAD_RIGHT;
-//import static android.view.KeyEvent.KEYCODE_DPAD_UP;
-//import static android.view.KeyEvent.KEYCODE_ENTER;
-//import static android.view.KeyEvent.KEYCODE_ESCAPE;
 
 public class MainActivity extends Activity {
     private TextView mKeyReceivedTextView;
-//    private AsyncTask mKeyTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,36 +25,12 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        //return super.dispatchKeyEvent(event);
         printKey(event);
+        // Exit from application
+        if ((event.getKeyCode() == KEYCODE_BACK) && event.isLongPress()) {
+            return super.dispatchKeyEvent(event);
+        }
         return true;
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-//        if (mKeyTask != null) {
-//            mKeyTask.cancel(true);
-//        }
-//        mKeyTask = new AsyncTask() {
-//            @Override
-//            protected Object doInBackground(Object[] objects) {
-//                try {
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException ex){
-//
-//                }
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Object o) {
-//                mKeyReceivedTextView.setText("Wait for key event ...");
-//            }
-//        };
-//        mKeyTask.execute();
-        return super.onKeyDown(keyCode, event);
     }
 
     private void printKey(KeyEvent event) {
@@ -81,7 +52,7 @@ public class MainActivity extends Activity {
             case KEYCODE_DPAD_UP:
                 codeName = "KEYCODE_DPAD_UP";
                 break;
-            case KEYCODE_ESCAPE:
+            case 111:   // KEYCODE_ESCAPE
                 codeName = "KEYCODE_ESCAPE";
                 break;
             case KEYCODE_BACK:
@@ -92,10 +63,17 @@ public class MainActivity extends Activity {
                 break;
 
             default:
-                codeName = String.format("KEYCODE: %d", keycode);
+                codeName = String.format(Locale.ENGLISH, "KEYCODE: %d", keycode);
                 break;
+        }
+        if (event.isLongPress()) {
+            codeName += " - LONG PRESS";
         }
 
         mKeyReceivedTextView.setText(codeName);
+    }
+
+    public void onExitButtonClick(View view) {
+        finish();
     }
 }
